@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<canvas id="screen" width="600" height="300"></canvas>
+<style>
+ #screen { background-color : green; }
+</style>
+<script type="text/javascript">
+
+//Global variables
+//描画コンテキスト初期設定*************************************
+var context = document.getElementById("screen");
+var draw = context.getContext("2d");
+var images = [];
+//くまこ初期設定**********************************************
+var x=0;
+var y=10;
+var vx=1;
+var vy=1;
+var c=0;
+var t = Date.now();
+var t_old=0;
+
+//requestAnimatinFrameのブラウザ違いを吸収
+(function() {
+  var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                              window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+  window.requestAnimationFrame = requestAnimationFrame;
+})();
+
+//Start
+window.onload = init();
+
+function init(){
+  //画像ファイル読み込み****************************************
+  var files = ["kumako01.png", "kumako02.png"];
+  var index=0;
+  for (var i in files ) {
+    var img = new Image();
+    img.src = files[i];
+    img.onload = function(){
+      index++;
+	  if ( index == files.length ) {
+	    drawAnime();
+	  }
+    };
+    img.onerror = function(){
+      alert("画像読み込み失敗");
+    };
+    images[i] = img; //画像を配列に格納
+  }
+  requestAnimationFrame(drawAnime);
+}
+
+//移動処理
+function drawAnime(){
+  //タイミング計算
+  var t = Date.now();
+  if ( t - t_old > 30) {
+    t_old = t;
+    x=x+2*vx;
+    y=y+2*vy;
+    if ( x > 568 ) { vx=-1 };
+    if ( x < 0   ) { vx= 1 };
+    if ( y > 268 ) { vy=-1 };
+    if ( y < 0   ) { vy= 1 };
+    drawChar(x,y);
+    c=c+1;
+    if ( c > 1   ) { c = 0 };
+  }
+  requestAnimationFrame(drawAnime);
+}
+
+//描画
+function drawChar(x,y){
+  //画面消去
+  draw.clearRect(0,0,800,300);
+  //キャラクター描画
+  //くまこ描画
+  draw.drawImage(images[c], x, y);
+};
+
+</script>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<canvas id="screen" width="600" height="300" style="border: 1px solid green"></canvas><br>
+<button id="speedup">SPEED UP!</button>
+<script type="text/javascript">
+
+
+var posx;
+var posy;
+var posx_old=posx;
+var posy_old=posy;
+
+//描画コンテキスト初期設定*************************************
+var context = document.getElementById("screen");
+var draw = context.getContext("2d");
+context.onmousemove = moveKumako;
+var btn = document.getElementById("speedup");
+btn.onmousedown = speedUp;
+
+//画像ファイル読み込み****************************************
+var files = ["kumako01.png", "kumako02.png"];
+var images = [];
+var index=0;
+for (var i in files ) {
+  var img = new Image();
+  img.src = files[i];
+  img.onload = function(){
+    index++;
+	if ( index == files.length ) {
+	  drawAnime();
+	}
+  };
+  img.onerror = function(){
+    alert("画像読み込み失敗");
+  };
+  images[i] = img; //画像を配列に格納
+}
+
+//くまこ初期設定**********************************************
+var x=200;
+var y=200;
+var vx=0;
+var vy=0;
+var c=0;
+setTimeout(drawAnime, 20);
+
+//移動処理
+function drawAnime(){
+  x=x+vx;
+  y=y+vy;
+  if ( x > 568 ) { x=568; vx=-1; }
+  if ( x < 0   ) { x=0;   vx=1; }
+  if ( y > 268 ) { y=268; vy=-1; }
+  if ( y < 0   ) { y=0; vy=1; }
+  drawChar(x,y);
+  c=c+1;
+  if ( c > 1   ) { c = 0 };
+  setTimeout(drawAnime, 20);
+}
+
+//描画
+function drawChar(x,y){
+  //画面消去
+  draw.clearRect(0,0,600,300);
+  //キャラクター描画
+  //くまこ描画
+  draw.drawImage(images[c], x, y);
+};
+
+//くまちゃん操作
+function moveKumako(e){
+  var r = e.target.getBoundingClientRect();
+  posx = e.clientX - r.left;
+  posy = e.clientY - r.top;
+	if ((posx - posx_old) > 0 ) { vx=1; vy=0; }
+	if ((posx - posx_old) <0 ) { vx=-1; vy=0; }
+	if ((posy - posy_old) > 0 ) { vy=1; vx=0; }
+	if ((posy - posy_old) <0)  { vy=-1; vx=0; }
+ 
+  posx_old = posx;
+  posy_old = posy;
+}
+
+function speedUp(e){
+  vx = vx*2;
+  vy = vy*2;
+}
+
+</script>

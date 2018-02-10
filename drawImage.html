@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<canvas id="screen"></canvas>
+<script type="text/javascript">
+
+//描画コンテキストを得る
+var context = document.getElementById("screen");
+var draw = context.getContext("2d");
+
+//画像ファイル読み込み
+var i = new Image();
+i.src = "kumako01.png";
+i.onload = function() {
+  draw.drawImage(i, 0, 0);
+};
+
+</script>
